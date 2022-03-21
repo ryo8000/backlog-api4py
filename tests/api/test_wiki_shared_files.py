@@ -18,6 +18,7 @@ from datetime import datetime
 import responses
 
 from backlog import BacklogApi
+from backlog.models import User
 
 
 class TestWikiSharedFile(unittest.TestCase):
@@ -75,21 +76,7 @@ class TestWikiSharedFile(unittest.TestCase):
         self.assertEqual(shared_file.dir, "/userIcon/")
         self.assertEqual(shared_file.name, "01_male clerk.png")
         self.assertEqual(shared_file.size, 2735)
-        self.assertEqual(shared_file.created_user.id, 5686)
-        self.assertEqual(shared_file.created_user.user_id, "takada")
-        self.assertEqual(shared_file.created_user.name, "takada")
-        self.assertEqual(shared_file.created_user.role_type, 2)
-        self.assertEqual(shared_file.created_user.lang, "ja")
-        self.assertEqual(
-            shared_file.created_user.mail_address,
-            "takada@nulab.example")
+        self.assertIsInstance(shared_file.created_user, User)
         self.assertEqual(shared_file.created, datetime(2009, 2, 27, 3, 26, 15))
-        self.assertEqual(shared_file.updated_user.id, 5686)
-        self.assertEqual(shared_file.updated_user.user_id, "takada")
-        self.assertEqual(shared_file.updated_user.name, "takada")
-        self.assertEqual(shared_file.updated_user.role_type, 2)
-        self.assertEqual(shared_file.updated_user.lang, "ja")
-        self.assertEqual(
-            shared_file.updated_user.mail_address,
-            "takada@nulab.example")
+        self.assertIsInstance(shared_file.updated_user, User)
         self.assertEqual(shared_file.updated, datetime(2009, 3, 3, 16, 57, 47))

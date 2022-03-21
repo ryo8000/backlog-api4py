@@ -18,6 +18,7 @@ from datetime import datetime
 import responses
 
 from backlog import BacklogApi
+from backlog.models import Attachment, SharedFile, Star, User
 
 
 class TestWiki(unittest.TestCase):
@@ -30,88 +31,72 @@ class TestWiki(unittest.TestCase):
 
     @responses.activate
     def test_get_wikis(self):
-        responses.add(
-            responses.GET,
-            f"{self.tested.base_url}wikis",
-            json=[
-                {
-                    "id": 1234567890,
-                    "projectId": 1234567890,
-                    "name": "Home",
-                    "content": None,
-                    "tags": [
-                        {
-                            "id": 12,
-                            "name": "proceedings"
-                        }
-                    ],
-                    "attachments": [
-                        {
-                            "id": 1,
-                            "name": "test.json",
-                            "size": 8857,
-                            "createdUser": {
-                                "id": 1,
-                                "userId": "admin",
-                                "name": "admin",
-                                "roleType": 1,
-                                "lang": "ja",
-                                "mailAddress": "eguchi@nulab.example"
-                            },
-                            "created": "2014-01-06T11:10:45Z"
-                        }
-                    ],
-                    "sharedFiles": [
-                        {
-                            "id": 454403,
-                            "type": "file",
-                            "dir": "/userIcon/",
-                            "name": "01_male clerk.png",
-                            "size": 2735,
-                            "createdUser": {
-                                "id": 5686,
-                                "userId": "takada",
-                                "name": "takada",
-                                "roleType": 2,
-                                "lang": "ja",
-                                "mailAddress": "takada@nulab.example"
-                            },
-                            "created": "2009-02-27T03:26:15Z",
-                            "updatedUser": {
-                                "id": 5686,
-                                "userId": "takada",
-                                "name": "takada",
-                                "roleType": 2,
-                                "lang": "ja",
-                                "mailAddress": "takada@nulab.example"
-                            },
-                            "updated": "2009-03-03T16:57:47Z"
-                        }
-                    ],
-                    "stars": [],
-                    "createdUser": {
-                        "id": 1,
-                        "userId": "admin",
-                        "name": "admin",
-                        "roleType": 1,
-                        "lang": "ja",
-                        "mailAddress": "eguchi@nulab.example"},
-                    "created": "2013-05-30T09:11:36Z",
-                    "updatedUser": {
-                        "id": 1,
-                        "userId": "admin",
-                        "name": "admin",
-                        "roleType": 1,
-                        "lang": "ja",
-                        "mailAddress": "eguchi@nulab.example"},
-                    "updated": "2013-05-30T09:11:36Z"
-                }
-            ],
-            match=[
-                responses.matchers.query_string_matcher(
-                    "projectIdOrKey=TEST&apiKey=key")
-            ],
-            status=200)
+        responses.add(responses.GET,
+                      f"{self.tested.base_url}wikis",
+                      json=[{"id": 1234567890,
+                             "projectId": 1234567890,
+                             "name": "Home",
+                             "content": None,
+                             "tags": [{"id": 12,
+                                       "name": "proceedings"}],
+                             "attachments": [{"id": 1,
+                                              "name": "test.json",
+                                              "size": 8857,
+                                              "createdUser": {"id": 1,
+                                                              "userId": "admin",
+                                                              "name": "admin",
+                                                              "roleType": 1,
+                                                              "lang": "ja",
+                                                              "mailAddress": "eguchi@nulab.example"},
+                                              "created": "2014-01-06T11:10:45Z"}],
+                             "sharedFiles": [{"id": 454403,
+                                              "type": "file",
+                                              "dir": "/userIcon/",
+                                              "name": "01_male clerk.png",
+                                              "size": 2735,
+                                              "createdUser": {"id": 5686,
+                                                              "userId": "takada",
+                                                              "name": "takada",
+                                                              "roleType": 2,
+                                                              "lang": "ja",
+                                                              "mailAddress": "takada@nulab.example"},
+                                              "created": "2009-02-27T03:26:15Z",
+                                              "updatedUser": {"id": 5686,
+                                                              "userId": "takada",
+                                                              "name": "takada",
+                                                              "roleType": 2,
+                                                              "lang": "ja",
+                                                              "mailAddress": "takada@nulab.example"},
+                                              "updated": "2009-03-03T16:57:47Z"}],
+                             "stars": [{"id": 1234567890,
+                                        "comment": None,
+                                        "url": "https://xx.backlogtool.com/view/BLG-1",
+                                        "title": "[BLG-1] first issue | Show issue - Backlog",
+                                        "presenter": {"id": 1,
+                                                      "userId": "admin",
+                                                      "name": "admin",
+                                                      "roleType": 1,
+                                                      "lang": "ja",
+                                                      "mailAddress": "eguchi@nulab.example",
+                                                      },
+                                        "created": "2014-01-23T10:55:19Z",
+                                        }],
+                             "createdUser": {"id": 1,
+                                             "userId": "admin",
+                                             "name": "admin",
+                                             "roleType": 1,
+                                             "lang": "ja",
+                                             "mailAddress": "eguchi@nulab.example"},
+                             "created": "2013-05-30T09:11:36Z",
+                             "updatedUser": {"id": 1,
+                                             "userId": "admin",
+                                             "name": "admin",
+                                             "roleType": 1,
+                                             "lang": "ja",
+                                             "mailAddress": "eguchi@nulab.example"},
+                             "updated": "2013-05-30T09:11:36Z"}],
+                      match=[responses.matchers.query_string_matcher("projectIdOrKey=TEST&apiKey=key")],
+                      status=200)
 
         wiki = self.tested.get_wikis("TEST")[0]
 
@@ -126,71 +111,12 @@ class TestWiki(unittest.TestCase):
         self.assertEqual(wiki.content, None)
         self.assertEqual(wiki.tags[0].id, 12)
         self.assertEqual(wiki.tags[0].name, "proceedings")
-        self.assertEqual(wiki.attachments[0].id, 1)
-        self.assertEqual(wiki.attachments[0].name, "test.json")
-        self.assertEqual(wiki.attachments[0].size, 8857)
-        self.assertEqual(wiki.attachments[0].created_user.id, 1)
-        self.assertEqual(
-            wiki.attachments[0].created_user.user_id,
-            "admin")
-        self.assertEqual(wiki.attachments[0].created_user.name, "admin")
-        self.assertEqual(wiki.attachments[0].created_user.role_type, 1)
-        self.assertEqual(wiki.attachments[0].created_user.lang, "ja")
-        self.assertEqual(
-            wiki.attachments[0].created_user.mail_address,
-            "eguchi@nulab.example")
-        self.assertEqual(
-            wiki.attachments[0].created, datetime(
-                2014, 1, 6, 11, 10, 45))
-        self.assertEqual(wiki.shared_files[0].id, 454403)
-        self.assertEqual(wiki.shared_files[0].type, "file")
-        self.assertEqual(wiki.shared_files[0].dir, "/userIcon/")
-        self.assertEqual(wiki.shared_files[0].name, "01_male clerk.png")
-        self.assertEqual(wiki.shared_files[0].size, 2735)
-        self.assertEqual(wiki.shared_files[0].created_user.id, 5686)
-        self.assertEqual(
-            wiki.shared_files[0].created_user.user_id,
-            "takada")
-        self.assertEqual(wiki.shared_files[0].created_user.name, "takada")
-        self.assertEqual(wiki.shared_files[0].created_user.role_type, 2)
-        self.assertEqual(wiki.shared_files[0].created_user.lang, "ja")
-        self.assertEqual(
-            wiki.shared_files[0].created_user.mail_address,
-            "takada@nulab.example")
-        self.assertEqual(
-            wiki.shared_files[0].created, datetime(
-                2009, 2, 27, 3, 26, 15))
-        self.assertEqual(wiki.shared_files[0].updated_user.id, 5686)
-        self.assertEqual(
-            wiki.shared_files[0].updated_user.user_id,
-            "takada")
-        self.assertEqual(wiki.shared_files[0].updated_user.name, "takada")
-        self.assertEqual(wiki.shared_files[0].updated_user.role_type, 2)
-        self.assertEqual(wiki.shared_files[0].updated_user.lang, "ja")
-        self.assertEqual(
-            wiki.shared_files[0].updated_user.mail_address,
-            "takada@nulab.example")
-        self.assertEqual(
-            wiki.shared_files[0].updated, datetime(
-                2009, 3, 3, 16, 57, 47))
-        self.assertEqual(wiki.stars, [])
-        self.assertEqual(wiki.created_user.id, 1)
-        self.assertEqual(wiki.created_user.user_id, "admin")
-        self.assertEqual(wiki.created_user.name, "admin")
-        self.assertEqual(wiki.created_user.role_type, 1)
-        self.assertEqual(wiki.created_user.lang, "ja")
-        self.assertEqual(
-            wiki.created_user.mail_address,
-            "eguchi@nulab.example")
-        self.assertEqual(wiki.updated, datetime(2013, 5, 30, 9, 11, 36))
-        self.assertEqual(wiki.updated_user.id, 1)
-        self.assertEqual(wiki.updated_user.user_id, "admin")
-        self.assertEqual(wiki.updated_user.name, "admin")
-        self.assertEqual(wiki.updated_user.role_type, 1)
-        self.assertEqual(wiki.updated_user.lang, "ja")
-        self.assertEqual(
-            wiki.updated_user.mail_address,
-            "eguchi@nulab.example")
+        self.assertIsInstance(wiki.attachments[0], Attachment)
+        self.assertIsInstance(wiki.shared_files[0], SharedFile)
+        self.assertIsInstance(wiki.stars[0], Star)
+        self.assertIsInstance(wiki.created_user, User)
+        self.assertEqual(wiki.created, datetime(2013, 5, 30, 9, 11, 36))
+        self.assertIsInstance(wiki.updated_user, User)
         self.assertEqual(wiki.updated, datetime(2013, 5, 30, 9, 11, 36))
 
     @responses.activate
@@ -221,78 +147,68 @@ class TestWiki(unittest.TestCase):
         responses.add(
             responses.GET,
             f"{self.tested.base_url}wikis/1234567890",
-            json={
-                "id": 1234567890,
-                "projectId": 1234567890,
-                "name": "Home",
-                "content": None,
-                "tags": [
-                        {
-                            "id": 12,
-                            "name": "proceedings"
-                        }
-                ],
-                "attachments": [
-                    {
-                        "id": 1,
-                        "name": "test.json",
-                        "size": 8857,
-                        "createdUser": {
-                                "id": 1,
-                                "userId": "admin",
-                                "name": "admin",
-                                "roleType": 1,
-                                "lang": "ja",
-                                "mailAddress": "eguchi@nulab.example"
-                        },
-                        "created": "2014-01-06T11:10:45Z"
-                    }
-                ],
-                "sharedFiles": [
-                    {
-                        "id": 454403,
-                        "type": "file",
-                        "dir": "/userIcon/",
-                        "name": "01_male clerk.png",
-                        "size": 2735,
-                        "createdUser": {
-                                "id": 5686,
-                                "userId": "takada",
-                                "name": "takada",
-                                "roleType": 2,
-                                "lang": "ja",
-                                "mailAddress": "takada@nulab.example"
-                        },
-                        "created": "2009-02-27T03:26:15Z",
-                        "updatedUser": {
-                            "id": 5686,
-                            "userId": "takada",
-                            "name": "takada",
-                            "roleType": 2,
-                            "lang": "ja",
-                            "mailAddress": "takada@nulab.example"
-                        },
-                        "updated": "2009-03-03T16:57:47Z"
-                    }
-                ],
-                "stars": [],
-                "createdUser": {
-                    "id": 1,
-                    "userId": "admin",
-                    "name": "admin",
-                    "roleType": 1,
-                    "lang": "ja",
-                    "mailAddress": "eguchi@nulab.example"},
-                "created": "2013-05-30T09:11:36Z",
-                "updatedUser": {
-                    "id": 1,
-                    "userId": "admin",
-                    "name": "admin",
-                    "roleType": 1,
-                    "lang": "ja",
-                    "mailAddress": "eguchi@nulab.example"},
-                "updated": "2013-05-30T09:11:36Z"
-            },
+            json={"id": 1234567890,
+                  "projectId": 1234567890,
+                  "name": "Home",
+                  "content": None,
+                  "tags": [{"id": 12,
+                            "name": "proceedings"}],
+                  "attachments": [{"id": 1,
+                                   "name": "test.json",
+                                   "size": 8857,
+                                   "createdUser": {"id": 1,
+                                                   "userId": "admin",
+                                                   "name": "admin",
+                                                   "roleType": 1,
+                                                   "lang": "ja",
+                                                   "mailAddress": "eguchi@nulab.example"},
+                                   "created": "2014-01-06T11:10:45Z"}],
+                  "sharedFiles": [{"id": 454403,
+                                   "type": "file",
+                                   "dir": "/userIcon/",
+                                   "name": "01_male clerk.png",
+                                   "size": 2735,
+                                   "createdUser": {"id": 5686,
+                                                   "userId": "takada",
+                                                   "name": "takada",
+                                                   "roleType": 2,
+                                                   "lang": "ja",
+                                                   "mailAddress": "takada@nulab.example"},
+                                   "created": "2009-02-27T03:26:15Z",
+                                   "updatedUser": {"id": 5686,
+                                                   "userId": "takada",
+                                                   "name": "takada",
+                                                   "roleType": 2,
+                                                   "lang": "ja",
+                                                   "mailAddress": "takada@nulab.example"},
+                                   "updated": "2009-03-03T16:57:47Z"}],
+                  "stars": [{"id": 1234567890,
+                             "comment": None,
+                             "url": "https://xx.backlogtool.com/view/BLG-1",
+                             "title": "[BLG-1] first issue | Show issue - Backlog",
+                             "presenter": {"id": 1,
+                                           "userId": "admin",
+                                           "name": "admin",
+                                           "roleType": 1,
+                                           "lang": "ja",
+                                           "mailAddress": "eguchi@nulab.example",
+                                           },
+                             "created": "2014-01-23T10:55:19Z",
+                             }],
+                  "createdUser": {"id": 1,
+                                  "userId": "admin",
+                                  "name": "admin",
+                                  "roleType": 1,
+                                  "lang": "ja",
+                                  "mailAddress": "eguchi@nulab.example"},
+                  "created": "2013-05-30T09:11:36Z",
+                  "updatedUser": {"id": 1,
+                                  "userId": "admin",
+                                  "name": "admin",
+                                  "roleType": 1,
+                                  "lang": "ja",
+                                  "mailAddress": "eguchi@nulab.example"},
+                  "updated": "2013-05-30T09:11:36Z"},
             status=200)
 
         wiki = self.tested.get_wiki(1234567890)
@@ -308,69 +224,10 @@ class TestWiki(unittest.TestCase):
         self.assertEqual(wiki.content, None)
         self.assertEqual(wiki.tags[0].id, 12)
         self.assertEqual(wiki.tags[0].name, "proceedings")
-        self.assertEqual(wiki.attachments[0].id, 1)
-        self.assertEqual(wiki.attachments[0].name, "test.json")
-        self.assertEqual(wiki.attachments[0].size, 8857)
-        self.assertEqual(wiki.attachments[0].created_user.id, 1)
-        self.assertEqual(
-            wiki.attachments[0].created_user.user_id,
-            "admin")
-        self.assertEqual(wiki.attachments[0].created_user.name, "admin")
-        self.assertEqual(wiki.attachments[0].created_user.role_type, 1)
-        self.assertEqual(wiki.attachments[0].created_user.lang, "ja")
-        self.assertEqual(
-            wiki.attachments[0].created_user.mail_address,
-            "eguchi@nulab.example")
-        self.assertEqual(
-            wiki.attachments[0].created, datetime(
-                2014, 1, 6, 11, 10, 45))
-        self.assertEqual(wiki.shared_files[0].id, 454403)
-        self.assertEqual(wiki.shared_files[0].type, "file")
-        self.assertEqual(wiki.shared_files[0].dir, "/userIcon/")
-        self.assertEqual(wiki.shared_files[0].name, "01_male clerk.png")
-        self.assertEqual(wiki.shared_files[0].size, 2735)
-        self.assertEqual(wiki.shared_files[0].created_user.id, 5686)
-        self.assertEqual(
-            wiki.shared_files[0].created_user.user_id,
-            "takada")
-        self.assertEqual(wiki.shared_files[0].created_user.name, "takada")
-        self.assertEqual(wiki.shared_files[0].created_user.role_type, 2)
-        self.assertEqual(wiki.shared_files[0].created_user.lang, "ja")
-        self.assertEqual(
-            wiki.shared_files[0].created_user.mail_address,
-            "takada@nulab.example")
-        self.assertEqual(
-            wiki.shared_files[0].created, datetime(
-                2009, 2, 27, 3, 26, 15))
-        self.assertEqual(wiki.shared_files[0].updated_user.id, 5686)
-        self.assertEqual(
-            wiki.shared_files[0].updated_user.user_id,
-            "takada")
-        self.assertEqual(wiki.shared_files[0].updated_user.name, "takada")
-        self.assertEqual(wiki.shared_files[0].updated_user.role_type, 2)
-        self.assertEqual(wiki.shared_files[0].updated_user.lang, "ja")
-        self.assertEqual(
-            wiki.shared_files[0].updated_user.mail_address,
-            "takada@nulab.example")
-        self.assertEqual(
-            wiki.shared_files[0].updated, datetime(
-                2009, 3, 3, 16, 57, 47))
-        self.assertEqual(wiki.stars, [])
-        self.assertEqual(wiki.created_user.id, 1)
-        self.assertEqual(wiki.created_user.user_id, "admin")
-        self.assertEqual(wiki.created_user.name, "admin")
-        self.assertEqual(wiki.created_user.role_type, 1)
-        self.assertEqual(wiki.created_user.lang, "ja")
-        self.assertEqual(
-            wiki.created_user.mail_address,
-            "eguchi@nulab.example")
-        self.assertEqual(wiki.updated, datetime(2013, 5, 30, 9, 11, 36))
-        self.assertEqual(wiki.updated_user.id, 1)
-        self.assertEqual(wiki.updated_user.user_id, "admin")
-        self.assertEqual(wiki.updated_user.name, "admin")
-        self.assertEqual(wiki.updated_user.role_type, 1)
-        self.assertEqual(wiki.updated_user.lang, "ja")
-        self.assertEqual(
-            wiki.updated_user.mail_address,
-            "eguchi@nulab.example")
+        self.assertIsInstance(wiki.attachments[0], Attachment)
+        self.assertIsInstance(wiki.shared_files[0], SharedFile)
+        self.assertIsInstance(wiki.stars[0], Star)
+        self.assertIsInstance(wiki.created_user, User)
+        self.assertEqual(wiki.created, datetime(2013, 5, 30, 9, 11, 36))
+        self.assertIsInstance(wiki.updated_user, User)
         self.assertEqual(wiki.updated, datetime(2013, 5, 30, 9, 11, 36))

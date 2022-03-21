@@ -18,6 +18,7 @@ from datetime import datetime
 import responses
 
 from backlog import BacklogApi
+from backlog.models import User
 
 
 class TestWikiAttachment(unittest.TestCase):
@@ -61,12 +62,5 @@ class TestWikiAttachment(unittest.TestCase):
         self.assertEqual(attachment.id, 1)
         self.assertEqual(attachment.name, "test.json")
         self.assertEqual(attachment.size, 8857)
-        self.assertEqual(attachment.created_user.id, 1)
-        self.assertEqual(attachment.created_user.user_id, "admin")
-        self.assertEqual(attachment.created_user.name, "admin")
-        self.assertEqual(attachment.created_user.role_type, 1)
-        self.assertEqual(attachment.created_user.lang, "ja")
-        self.assertEqual(
-            attachment.created_user.mail_address,
-            "eguchi@nulab.example")
+        self.assertIsInstance(attachment.created_user, User)
         self.assertEqual(attachment.created, datetime(2014, 1, 6, 11, 10, 45))

@@ -13,11 +13,11 @@
 # limitations under the License.
 
 import unittest
-from datetime import datetime
 
 import responses
 
 from backlog import BacklogApi
+from backlog.models import User
 
 
 class TestUserStar(unittest.TestCase):
@@ -67,15 +67,7 @@ class TestUserStar(unittest.TestCase):
         self.assertEqual(
             star.title,
             "[BLG-1] first issue | Show issue - Backlog")
-        self.assertEqual(star.presenter.id, 1)
-        self.assertEqual(star.presenter.user_id, "admin")
-        self.assertEqual(star.presenter.name, "admin")
-        self.assertEqual(star.presenter.role_type, 1)
-        self.assertEqual(star.presenter.lang, "ja")
-        self.assertEqual(star.presenter.mail_address, "eguchi@nulab.example")
-        self.assertEqual(star.presenter.nulab_account, None)
-        self.assertEqual(star.presenter.keyword, "Eguchi EGUCHI")
-        self.assertEqual(star.created, datetime(2014, 1, 23, 10, 55, 19))
+        self.assertIsInstance(star.presenter, User)
 
     @responses.activate
     def test_get_number_of_user_received_stars(self):

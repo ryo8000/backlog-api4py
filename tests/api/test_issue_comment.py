@@ -18,6 +18,7 @@ from datetime import datetime
 import responses
 
 from backlog import BacklogApi
+from backlog.models import Star, User
 
 
 class TestIssueComment(unittest.TestCase):
@@ -81,35 +82,11 @@ class TestIssueComment(unittest.TestCase):
         self.assertEqual(comment.change_log[0].attachment_info, None)
         self.assertEqual(comment.change_log[0].attribute_info, None)
         self.assertEqual(comment.change_log[0].notification_info, None)
-        self.assertEqual(comment.created_user.id, 1)
-        self.assertEqual(comment.created_user.user_id, "admin")
-        self.assertEqual(comment.created_user.name, "admin")
-        self.assertEqual(comment.created_user.role_type, 1)
-        self.assertEqual(comment.created_user.lang, "ja")
-        self.assertEqual(
-            comment.created_user.mail_address,
-            "eguchi@nulab.example")
+        self.assertIsInstance(comment.created_user, User)
         self.assertEqual(comment.created, datetime(2013, 8, 5, 6, 15, 6))
         self.assertEqual(comment.updated, datetime(2013, 8, 5, 6, 15, 6))
-        self.assertEqual(comment.stars[0].id, 1234567890)
-        self.assertEqual(comment.stars[0].comment, None)
-        self.assertEqual(
-            comment.stars[0].url,
-            "https://xx.backlogtool.com/view/BLG-1")
-        self.assertEqual(
-            comment.stars[0].title,
-            "[BLG-1] first issue | Show issue - Backlog")
-        self.assertEqual(comment.stars[0].presenter.id, 1)
-        self.assertEqual(comment.stars[0].presenter.user_id, "admin")
-        self.assertEqual(comment.stars[0].presenter.name, "admin")
-        self.assertEqual(comment.stars[0].presenter.role_type, 1)
-        self.assertEqual(comment.stars[0].presenter.lang, "ja")
-        self.assertEqual(
-            comment.stars[0].presenter.mail_address,
-            "eguchi@nulab.example")
-        self.assertEqual(
-            comment.stars[0].created, datetime(
-                2014, 1, 23, 10, 55, 19))
+        self.assertIsInstance(comment.stars[0], Star)
+        self.assertEqual(comment.notifications, [])
 
     @responses.activate
     def test_get_number_of_comments(self):
@@ -182,32 +159,8 @@ class TestIssueComment(unittest.TestCase):
         self.assertEqual(comment.change_log[0].attachment_info, None)
         self.assertEqual(comment.change_log[0].attribute_info, None)
         self.assertEqual(comment.change_log[0].notification_info, None)
-        self.assertEqual(comment.created_user.id, 1)
-        self.assertEqual(comment.created_user.user_id, "admin")
-        self.assertEqual(comment.created_user.name, "admin")
-        self.assertEqual(comment.created_user.role_type, 1)
-        self.assertEqual(comment.created_user.lang, "ja")
-        self.assertEqual(
-            comment.created_user.mail_address,
-            "eguchi@nulab.example")
+        self.assertIsInstance(comment.created_user, User)
         self.assertEqual(comment.created, datetime(2013, 8, 5, 6, 15, 6))
         self.assertEqual(comment.updated, datetime(2013, 8, 5, 6, 15, 6))
-        self.assertEqual(comment.stars[0].id, 1234567890)
-        self.assertEqual(comment.stars[0].comment, None)
-        self.assertEqual(
-            comment.stars[0].url,
-            "https://xx.backlogtool.com/view/BLG-1")
-        self.assertEqual(
-            comment.stars[0].title,
-            "[BLG-1] first issue | Show issue - Backlog")
-        self.assertEqual(comment.stars[0].presenter.id, 1)
-        self.assertEqual(comment.stars[0].presenter.user_id, "admin")
-        self.assertEqual(comment.stars[0].presenter.name, "admin")
-        self.assertEqual(comment.stars[0].presenter.role_type, 1)
-        self.assertEqual(comment.stars[0].presenter.lang, "ja")
-        self.assertEqual(
-            comment.stars[0].presenter.mail_address,
-            "eguchi@nulab.example")
-        self.assertEqual(
-            comment.stars[0].created, datetime(
-                2014, 1, 23, 10, 55, 19))
+        self.assertIsInstance(comment.stars[0], Star)
+        self.assertEqual(comment.notifications, [])
