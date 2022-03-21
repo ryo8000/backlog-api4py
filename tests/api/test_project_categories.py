@@ -19,7 +19,7 @@ import responses
 from backlog import BacklogApi
 
 
-class TestProjectIssueType(unittest.TestCase):
+class TestProjectCategory(unittest.TestCase):
     def setUp(self):
         self.tested = BacklogApi(
             space_key="test",
@@ -28,35 +28,27 @@ class TestProjectIssueType(unittest.TestCase):
         )
 
     @responses.activate
-    def test_get_project_issue_types(self):
+    def test_get_project_categories(self):
         responses.add(
             responses.GET,
-            f"{self.tested.base_url}projects/TEST/issueTypes",
+            f"{self.tested.base_url}projects/TEST/categories",
             json=[
                 {
                     "id": 1234567890,
-                    "projectId": 1234567890,
-                    "name": "Bug",
-                    "color": "#990000",
-                    "displayOrder": 0,
-                    "templateSummary": "Subject",
-                    "templateDescription": "Description",
+                    "name": "Development",
+                    "displayOrder": 0
                 },
             ],
             status=200
         )
 
-        issue_type = self.tested.get_project_issue_types("TEST")[0]
+        issue_type = self.tested.get_project_categories("TEST")[0]
 
         request = responses.calls[0].request
         self.assertEqual(request.method, "GET")
         self.assertEqual(
             request.url,
-            f"{self.tested.base_url}projects/TEST/issueTypes?apiKey=key")
+            f"{self.tested.base_url}projects/TEST/categories?apiKey=key")
         self.assertEqual(issue_type.id, 1234567890)
-        self.assertEqual(issue_type.project_id, 1234567890)
-        self.assertEqual(issue_type.name, "Bug")
-        self.assertEqual(issue_type.color, "#990000")
+        self.assertEqual(issue_type.name, "Development")
         self.assertEqual(issue_type.display_order, 0)
-        self.assertEqual(issue_type.template_summary, "Subject")
-        self.assertEqual(issue_type.template_description, "Description")

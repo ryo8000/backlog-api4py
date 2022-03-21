@@ -18,7 +18,8 @@ from typing import List, Union
 
 import requests
 
-from .models import IssueType, Priority, Project, Resolution, Space, User
+from .models import (Category, IssueType, Priority, Project, Resolution, Space,
+                     User)
 
 
 class BacklogApi(object):
@@ -168,6 +169,18 @@ class BacklogApi(object):
 
         issue_types = self._send_get_request(url)
         return [IssueType.from_dict(issue_type) for issue_type in issue_types]
+
+    def get_project_categories(
+            self, project_id_or_key: Union[int, str]) -> List[Category]:
+        """Get list of categories in the project.
+
+        :param project_id_or_key: project id or project key
+        :return: list of categories
+        """
+        url = f"projects/{project_id_or_key}/categories"
+
+        categories = self._send_get_request(url)
+        return [Category.from_dict(category) for category in categories]
 
     def _send_get_request(self, path: str, query_params: dict = None):
         query_params = query_params or {}

@@ -33,4 +33,5 @@ from .space import (  # noqa
 )
 from .issue import (  # noqa
     IssueType,
+    Category,
 )

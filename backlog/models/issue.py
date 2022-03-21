@@ -43,3 +43,20 @@ class IssueType(Base):
             template_summary=data.get("templateSummary"),
             template_description=data.get("templateDescription"),
         )
+
+
+@dataclass
+class Category(Base):
+    """Category class."""
+
+    id: int
+    name: str
+    display_order: int
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            id=data["id"],
+            name=data["name"],
+            display_order=data["displayOrder"],
+        )
