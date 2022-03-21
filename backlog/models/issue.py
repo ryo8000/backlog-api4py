@@ -22,6 +22,27 @@ from .base import Base
 
 
 @dataclass
+class Status(Base):
+    """Status class."""
+
+    id: int
+    project_id: int
+    name: str
+    color: str
+    display_order: int
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            id=data["id"],
+            project_id=data["projectId"],
+            name=data["name"],
+            color=data["color"],
+            display_order=data["displayOrder"],
+        )
+
+
+@dataclass
 class IssueType(Base):
     """Issue Type class."""
 

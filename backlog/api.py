@@ -19,7 +19,7 @@ from typing import List, Union
 import requests
 
 from .models import (Category, IssueType, Priority, Project, Resolution, Space,
-                     User, Version)
+                     Status, User, Version)
 
 
 class BacklogApi(object):
@@ -157,6 +157,18 @@ class BacklogApi(object):
         administrators = self._send_get_request(url)
         return [User.from_dict(administrator)
                 for administrator in administrators]
+
+    def get_project_statuses(
+            self, project_id_or_key: Union[int, str]) -> List[Status]:
+        """Get list of statuses in the project.
+
+        :param project_id_or_key: project id or project key
+        :return: list of issue statuses
+        """
+        url = f"projects/{project_id_or_key}/statuses"
+
+        statuses = self._send_get_request(url)
+        return [Status.from_dict(status) for status in statuses]
 
     def get_project_issue_types(
             self, project_id_or_key: Union[int, str]) -> List[IssueType]:

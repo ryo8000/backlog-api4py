@@ -32,6 +32,7 @@ from .space import (  # noqa
     Space,
 )
 from .issue import (  # noqa
+    Status,
     IssueType,
     Category,
     Version,
