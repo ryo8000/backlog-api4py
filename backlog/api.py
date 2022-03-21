@@ -18,7 +18,7 @@ from typing import List, Union
 
 import requests
 
-from .models import Project, Space, User
+from .models import Project, Resolution, Space, User
 
 
 class BacklogApi(object):
@@ -89,6 +89,17 @@ class BacklogApi(object):
 
         user = self._send_get_request(url)
         return User.from_dict(user)
+
+    def get_resolutions(self) -> List[Resolution]:
+        """Get list of resolutions.
+
+        :return: list of resolutions
+        """
+        url = "resolutions"
+
+        resolutions = self._send_get_request(url)
+        return [Resolution.value_of(resolution["id"])
+                for resolution in resolutions]
 
     def get_projects(self) -> List[Project]:
         """Get list of projects.

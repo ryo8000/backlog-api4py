@@ -17,6 +17,9 @@
 from .base import (  # noqa
     Base,
 )
+from .const import (  # noqa
+    Resolution,
+)
 from .user import (  # noqa
     NulabAccount,
     User,
