@@ -14,6 +14,10 @@
 
 """Backlog API module."""
 
+import requests
+
+from .models import Space
+
 class BacklogApi(object):
     """Backlog API class."""
 
@@ -41,3 +45,20 @@ class BacklogApi(object):
 
         self.base_url = f"https://{space_key}.{domain}/api/v2/"
         self.api_key = api_key
+
+    def get_space(self) -> Space:
+        """Get information about your space.
+
+        :return: space information
+        """
+        url = "space"
+
+        space = self._send_get_request(url)
+        return Space.from_dict(space)
+
+    def _send_get_request(self, path: str, query_params: dict = None):
+        query_params = query_params or {}
+        query_params["apiKey"] = self.api_key
+
+        response = requests.get(self.base_url + path, params=query_params)
+        return response.json()
