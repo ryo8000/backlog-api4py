@@ -18,7 +18,7 @@ from typing import List, Union
 
 import requests
 
-from .models import Priority, Project, Resolution, Space, User
+from .models import IssueType, Priority, Project, Resolution, Space, User
 
 
 class BacklogApi(object):
@@ -156,6 +156,18 @@ class BacklogApi(object):
         administrators = self._send_get_request(url)
         return [User.from_dict(administrator)
                 for administrator in administrators]
+
+    def get_project_issue_types(
+            self, project_id_or_key: Union[int, str]) -> List[IssueType]:
+        """Get list of issue types in the project.
+
+        :param project_id_or_key: project id or project key
+        :return: list of issue types
+        """
+        url = f"projects/{project_id_or_key}/issueTypes"
+
+        issue_types = self._send_get_request(url)
+        return [IssueType.from_dict(issue_type) for issue_type in issue_types]
 
     def _send_get_request(self, path: str, query_params: dict = None):
         query_params = query_params or {}

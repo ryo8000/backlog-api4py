@@ -31,3 +31,6 @@ from .project import (  # noqa
 from .space import (  # noqa
     Space,
 )
+from .issue import (  # noqa
+    IssueType,
+)
