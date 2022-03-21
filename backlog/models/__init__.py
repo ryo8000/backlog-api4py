@@ -17,6 +17,10 @@
 from .base import (  # noqa
     Base,
 )
+from .user import (  # noqa
+    NulabAccount,
+    User,
+)
 from .project import (  # noqa
     Project,
 )

@@ -18,7 +18,8 @@ from typing import List, Union
 
 import requests
 
-from .models import Project, Space
+from .models import Project, Space, User
+
 
 class BacklogApi(object):
     """Backlog API class."""
@@ -57,6 +58,37 @@ class BacklogApi(object):
 
         space = self._send_get_request(url)
         return Space.from_dict(space)
+
+    def get_users(self) -> List[User]:
+        """Get list of users in your space.
+
+        :return: list of users
+        """
+        url = "users"
+
+        users = self._send_get_request(url)
+        return [User.from_dict(user) for user in users]
+
+    def get_user(self, user_id: int) -> User:
+        """Get information about user.
+
+        :param user_id: user id
+        :return: user information
+        """
+        url = f"users/{user_id}"
+
+        user = self._send_get_request(url)
+        return User.from_dict(user)
+
+    def get_own_user(self) -> User:
+        """Get own information about user.
+
+        :return: user information
+        """
+        url = "users/myself"
+
+        user = self._send_get_request(url)
+        return User.from_dict(user)
 
     def get_projects(self) -> List[Project]:
         """Get list of projects.
