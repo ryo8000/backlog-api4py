@@ -17,6 +17,9 @@
 from .base import (  # noqa
     Base,
 )
+from .project import (  # noqa
+    Project,
+)
 from .space import (  # noqa
     Space,
 )

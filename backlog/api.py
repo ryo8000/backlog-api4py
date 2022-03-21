@@ -14,9 +14,11 @@
 
 """Backlog API module."""
 
+from typing import List, Union
+
 import requests
 
-from .models import Space
+from .models import Project, Space
 
 class BacklogApi(object):
     """Backlog API class."""
@@ -55,6 +57,27 @@ class BacklogApi(object):
 
         space = self._send_get_request(url)
         return Space.from_dict(space)
+
+    def get_projects(self) -> List[Project]:
+        """Get list of projects.
+
+        :return: list of projects
+        """
+        url = "projects"
+
+        projects = self._send_get_request(url)
+        return [Project.from_dict(project) for project in projects]
+
+    def get_project(self, project_id_or_key: Union[int, str]) -> Project:
+        """Get information about project.
+
+        :param project_id_or_key: project id or project key
+        :return: project information
+        """
+        url = f"projects/{project_id_or_key}"
+
+        project = self._send_get_request(url)
+        return Project.from_dict(project)
 
     def _send_get_request(self, path: str, query_params: dict = None):
         query_params = query_params or {}
