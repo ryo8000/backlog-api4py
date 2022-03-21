@@ -15,6 +15,29 @@
 """Backlog API module."""
 
 class BacklogApi(object):
+    """Backlog API class."""
 
-    def do_something(self):
-        return "hello"
+    SPACE_TYPES = {
+        "jp": "backlog.jp",
+        "com": "backlog.com",
+        "tool": "backlogtool.com"
+    }
+
+    def __init__(self, space_key: str, space_type: str, api_key: str):
+        """__init__ method.
+
+        :param space_key: space key
+        :param space_type: space type
+        :param api_key: api key
+        :raises ValueError: when initialization fails
+        """
+        if not space_key:
+            raise ValueError("space_key must not be empty.")
+        domain = self.SPACE_TYPES.get(space_type)
+        if not domain:
+            raise ValueError("space_type must be one of 'jp', 'com', 'tool'.")
+        if not api_key:
+            raise ValueError("api_key must not be empty.")
+
+        self.base_url = f"https://{space_key}.{domain}/api/v2/"
+        self.api_key = api_key
