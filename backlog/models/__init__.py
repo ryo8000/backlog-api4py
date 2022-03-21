@@ -31,6 +31,9 @@ from .project import (  # noqa
 from .space import (  # noqa
     Space,
 )
+from .star import (  # noqa
+    Star,
+)
 from .issue import (  # noqa
     Status,
     IssueType,

@@ -19,7 +19,7 @@ from typing import List, Union
 import requests
 
 from .models import (Category, IssueType, Priority, Project, Resolution, Space,
-                     Status, User, Version)
+                     Star, Status, User, Version)
 
 
 class BacklogApi(object):
@@ -90,6 +90,28 @@ class BacklogApi(object):
 
         user = self._send_get_request(url)
         return User.from_dict(user)
+
+    def get_user_received_stars(self, user_id: int) -> List[Star]:
+        """Get list of stars that user received.
+
+        :param user_id: user id
+        :return: list of stars
+        """
+        url = f"users/{user_id}/stars"
+
+        stars = self._send_get_request(url)
+        return [Star.from_dict(star) for star in stars]
+
+    def get_number_of_user_received_stars(self, user_id: int) -> int:
+        """Get number of stars that user received.
+
+        :param user_id: user id
+        :return: number of stars
+        """
+        url = f"users/{user_id}/stars/count"
+
+        res = self._send_get_request(url)
+        return res.get("count")
 
     def get_priorities(self) -> List[Priority]:
         """Get list of priorities that can be set for issue.
