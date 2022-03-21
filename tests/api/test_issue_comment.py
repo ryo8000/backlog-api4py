@@ -112,7 +112,7 @@ class TestIssueComment(unittest.TestCase):
                 2014, 1, 23, 10, 55, 19))
 
     @responses.activate
-    def test_get_number_of_comment(self):
+    def test_get_number_of_comments(self):
         responses.add(
             responses.GET,
             f"{self.tested.base_url}issues/1111111111/comments/count",
@@ -121,7 +121,7 @@ class TestIssueComment(unittest.TestCase):
             },
             status=200)
 
-        count = self.tested.get_number_of_comment(1111111111)
+        count = self.tested.get_number_of_comments(1111111111)
 
         request = responses.calls[0].request
         self.assertEqual(request.method, "GET")

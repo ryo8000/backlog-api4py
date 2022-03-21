@@ -21,6 +21,10 @@ from .const import (  # noqa
     Priority,
     Resolution,
 )
+from .file import (  # noqa
+    Attachment,
+    SharedFile,
+)
 from .user import (  # noqa
     NulabAccount,
     User,
@@ -41,4 +45,7 @@ from .issue import (  # noqa
     Version,
     ChangeLog,
     Comment,
+)
+from .wiki import (  # noqa
+    Wiki,
 )

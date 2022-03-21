@@ -14,12 +14,12 @@
 
 """Backlog API module."""
 
-from typing import List, Union
+from typing import List, Optional, Union
 
 import requests
 
 from .models import (Category, Comment, IssueType, Priority, Project,
-                     Resolution, Space, Star, Status, User, Version)
+                     Resolution, Space, Star, Status, User, Version, Wiki)
 
 
 class BacklogApi(object):
@@ -240,12 +240,12 @@ class BacklogApi(object):
         comments = self._send_get_request(url)
         return [Comment.from_dict(comment) for comment in comments]
 
-    def get_number_of_comment(
+    def get_number_of_comments(
             self, issue_id_or_key: Union[int, str]) -> int:
         """Get number of comments in issue.
 
         :param issue_id_or_key: issue id or issue key
-        :return: list of comments
+        :return: number of comments
         """
         url = f"issues/{issue_id_or_key}/comments/count"
 
@@ -266,6 +266,52 @@ class BacklogApi(object):
 
         comment = self._send_get_request(url)
         return Comment.from_dict(comment)
+
+    def get_wikis(
+            self,
+            project_id_or_key: Union[int, str],
+            keyword: Optional[str] = None) -> List[Wiki]:
+        """Get list of wiki pages.
+
+        :param project_id_or_key: project id or project key
+        :param keyword: keyword
+        :return: list of wiki pages
+        """
+        url = "wikis"
+        query_params = {
+            "projectIdOrKey": project_id_or_key,
+        }
+        if keyword is not None:
+            query_params["keyword"] = keyword
+
+        wikis = self._send_get_request(url, query_params)
+        return [Wiki.from_dict(wiki) for wiki in wikis]
+
+    def get_number_of_wikis(
+            self, project_id_or_key: Union[int, str]) -> int:
+        """Get number of wiki pages.
+
+        :param project_id_or_key: project id or project key
+        :return: number of wiki pages
+        """
+        url = "wikis/count"
+        query_params = {
+            "projectIdOrKey": project_id_or_key,
+        }
+
+        res = self._send_get_request(url, query_params)
+        return res["count"]
+
+    def get_wiki(self, wiki_id: int) -> Wiki:
+        """Get information about wiki page.
+
+        :param wiki_id: wiki id
+        :return: list of wiki pages
+        """
+        url = f"wikis/{wiki_id}"
+
+        wiki = self._send_get_request(url)
+        return Wiki.from_dict(wiki)
 
     def _send_get_request(self, path: str, query_params: dict = None):
         query_params = query_params or {}
