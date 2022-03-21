@@ -39,4 +39,6 @@ from .issue import (  # noqa
     IssueType,
     Category,
     Version,
+    ChangeLog,
+    Comment,
 )

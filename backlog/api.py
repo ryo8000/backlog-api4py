@@ -18,8 +18,8 @@ from typing import List, Union
 
 import requests
 
-from .models import (Category, IssueType, Priority, Project, Resolution, Space,
-                     Star, Status, User, Version)
+from .models import (Category, Comment, IssueType, Priority, Project,
+                     Resolution, Space, Star, Status, User, Version)
 
 
 class BacklogApi(object):
@@ -111,7 +111,7 @@ class BacklogApi(object):
         url = f"users/{user_id}/stars/count"
 
         res = self._send_get_request(url)
-        return res.get("count")
+        return res["count"]
 
     def get_priorities(self) -> List[Priority]:
         """Get list of priorities that can be set for issue.
@@ -227,6 +227,45 @@ class BacklogApi(object):
 
         versions = self._send_get_request(url)
         return [Version.from_dict(version) for version in versions]
+
+    def get_issue_comments(
+            self, issue_id_or_key: Union[int, str]) -> List[Comment]:
+        """Get list of comments in issue.
+
+        :param issue_id_or_key: issue id or issue key
+        :return: list of comments
+        """
+        url = f"issues/{issue_id_or_key}/comments"
+
+        comments = self._send_get_request(url)
+        return [Comment.from_dict(comment) for comment in comments]
+
+    def get_number_of_comment(
+            self, issue_id_or_key: Union[int, str]) -> int:
+        """Get number of comments in issue.
+
+        :param issue_id_or_key: issue id or issue key
+        :return: list of comments
+        """
+        url = f"issues/{issue_id_or_key}/comments/count"
+
+        res = self._send_get_request(url)
+        return res["count"]
+
+    def get_issue_comment(
+            self,
+            issue_id_or_key: Union[int, str],
+            comment_id: int) -> Comment:
+        """Get information about comment.
+
+        :param issue_id_or_key: issue id or issue key
+        :param comment_id: comment id
+        :return: list of comments
+        """
+        url = f"issues/{issue_id_or_key}/comments/{comment_id}"
+
+        comment = self._send_get_request(url)
+        return Comment.from_dict(comment)
 
     def _send_get_request(self, path: str, query_params: dict = None):
         query_params = query_params or {}

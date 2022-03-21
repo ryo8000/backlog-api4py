@@ -16,9 +16,11 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
+from typing import Any, List, Optional
 
 from .base import Base
+from .star import Star
+from .user import User
 
 
 @dataclass
@@ -115,4 +117,55 @@ class Version(Base):
             release_due_date=release_due_date,
             archived=data["archived"],
             display_order=data["displayOrder"],
+        )
+
+
+@dataclass
+class ChangeLog(Base):
+    """Change log class."""
+
+    # TODO: type fix
+    field: str
+    new_value: Any
+    original_value: Any
+    attachment_info: Optional[Any]
+    attribute_info: Optional[Any]
+    notification_info: Optional[Any]
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            field=data["field"],
+            new_value=data["newValue"],
+            original_value=data["originalValue"],
+            attachment_info=data["attachmentInfo"],
+            attribute_info=data["attributeInfo"],
+            notification_info=data["notificationInfo"],
+        )
+
+
+@dataclass
+class Comment(Base):
+    """Comment class."""
+
+    id: int
+    content: Optional[str]
+    change_log: List[ChangeLog]
+    created_user: User
+    created: datetime
+    updated: datetime
+    stars: List[Star]
+    notifications: list  # TODO: type fix
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            id=data["id"],
+            content=data["content"],
+            change_log=[ChangeLog.from_dict(cl) for cl in data["changeLog"]],
+            created_user=User.from_dict(data["createdUser"]),
+            created=datetime.strptime(data["created"], cls._DATETIME_FORMAT),
+            updated=datetime.strptime(data["updated"], cls._DATETIME_FORMAT),
+            stars=[Star.from_dict(s) for s in data["stars"]],
+            notifications=data["notifications"],
         )

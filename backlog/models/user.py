@@ -48,12 +48,12 @@ class User(Base):
     lang: Optional[str]
     mail_address: str
     nulab_account: Optional[NulabAccount]
-    keyword: str
+    keyword: Optional[str]
 
     @classmethod
     def from_dict(cls, data: dict):
         nulab_account = NulabAccount.from_dict(
-            data["nulabAccount"]) if data["nulabAccount"] else None
+            data["nulabAccount"]) if data.get("nulabAccount") else None
 
         return cls(
             id=data["id"],
@@ -63,5 +63,5 @@ class User(Base):
             lang=data["lang"],
             mail_address=data["mailAddress"],
             nulab_account=nulab_account,
-            keyword=data["keyword"],
+            keyword=data.get("keyword"),
         )
