@@ -26,10 +26,11 @@ class Base(metaclass=ABCMeta):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: dict):
-        """Create instances from dictionary type variable.
+    def from_dict(cls, data: dict) -> "Base":
+        """Create instance from dictionary type variable.
 
         :param data: dictionary type variable
+        :return: this class instance
         """
         raise NotImplementedError
 
