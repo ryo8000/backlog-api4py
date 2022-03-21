@@ -111,6 +111,31 @@ class BacklogApi(object):
         project = self._send_get_request(url)
         return Project.from_dict(project)
 
+    def get_project_users(
+            self, project_id_or_key: Union[int, str]) -> List[User]:
+        """Get list of project members.
+
+        :param project_id_or_key: project id or project key
+        :return: list of project members
+        """
+        url = f"projects/{project_id_or_key}/users"
+
+        users = self._send_get_request(url)
+        return [User.from_dict(user) for user in users]
+
+    def get_project_administrators(
+            self, project_id_or_key: Union[int, str]) -> List[User]:
+        """Get list of users who has project administrator role.
+
+        :param project_id_or_key: project id or project key
+        :return: list of project administrators
+        """
+        url = f"projects/{project_id_or_key}/administrators"
+
+        administrators = self._send_get_request(url)
+        return [User.from_dict(administrator)
+                for administrator in administrators]
+
     def _send_get_request(self, path: str, query_params: dict = None):
         query_params = query_params or {}
         query_params["apiKey"] = self.api_key
