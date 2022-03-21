@@ -18,8 +18,9 @@ from typing import List, Optional, Union
 
 import requests
 
-from .models import (Category, Comment, IssueType, Priority, Project,
-                     Resolution, Space, Star, Status, User, Version, Wiki)
+from .models import (Attachment, Category, Comment, IssueType, Priority,
+                     Project, Resolution, Space, Star, Status, User, Version,
+                     Wiki)
 
 
 class BacklogApi(object):
@@ -312,6 +313,19 @@ class BacklogApi(object):
 
         wiki = self._send_get_request(url)
         return Wiki.from_dict(wiki)
+
+    def get_wiki_attachments(
+            self,
+            wiki_id: int) -> List[Attachment]:
+        """Get list of files attached to wiki.
+
+        :param wiki_id: wiki id
+        :return: list of wiki attachments
+        """
+        url = f"wikis/{wiki_id}/attachments"
+
+        wikis = self._send_get_request(url)
+        return [Attachment.from_dict(wiki) for wiki in wikis]
 
     def _send_get_request(self, path: str, query_params: dict = None):
         query_params = query_params or {}
