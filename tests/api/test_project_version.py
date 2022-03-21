@@ -13,13 +13,14 @@
 # limitations under the License.
 
 import unittest
+from datetime import datetime
 
 import responses
 
 from backlog import BacklogApi
 
 
-class TestProjectCategory(unittest.TestCase):
+class TestProjectVersion(unittest.TestCase):
     def setUp(self):
         self.tested = BacklogApi(
             space_key="test",
@@ -28,27 +29,39 @@ class TestProjectCategory(unittest.TestCase):
         )
 
     @responses.activate
-    def test_get_project_categories(self):
+    def test_get_project_versions(self):
         responses.add(
             responses.GET,
-            f"{self.tested.base_url}projects/TEST/categories",
+            f"{self.tested.base_url}projects/TEST/versions",
             json=[
                 {
                     "id": 1234567890,
-                    "name": "Development",
+                    "projectId": 1234567890,
+                    "name": "wait for release",
+                    "description": "",
+                    "startDate": "2020-07-15T00:00:00Z",
+                    "releaseDueDate": "2020-08-10T00:00:00Z",
+                    "archived": False,
                     "displayOrder": 0
                 },
             ],
             status=200
         )
 
-        issue_type = self.tested.get_project_categories("TEST")[0]
+        version = self.tested.get_project_versions("TEST")[0]
 
         request = responses.calls[0].request
         self.assertEqual(request.method, "GET")
         self.assertEqual(
             request.url,
-            f"{self.tested.base_url}projects/TEST/categories?apiKey=key")
-        self.assertEqual(issue_type.id, 1234567890)
-        self.assertEqual(issue_type.name, "Development")
-        self.assertEqual(issue_type.display_order, 0)
+            f"{self.tested.base_url}projects/TEST/versions?apiKey=key")
+        self.assertEqual(version.id, 1234567890)
+        self.assertEqual(version.project_id, 1234567890)
+        self.assertEqual(version.name, "wait for release")
+        self.assertEqual(version.description, "")
+        self.assertEqual(version.start_date, datetime(2020, 7, 15, 0, 0, 0))
+        self.assertEqual(
+            version.release_due_date, datetime(
+                2020, 8, 10, 0, 0, 0))
+        self.assertEqual(version.archived, False)
+        self.assertEqual(version.display_order, 0)

@@ -15,6 +15,7 @@
 """Issue module."""
 
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Optional
 
 from .base import Base
@@ -58,5 +59,39 @@ class Category(Base):
         return cls(
             id=data["id"],
             name=data["name"],
+            display_order=data["displayOrder"],
+        )
+
+
+@dataclass
+class Version(Base):
+    """Versions(Milestones) class."""
+
+    id: int
+    project_id: int
+    name: str
+    description: Optional[str]
+    start_date: Optional[datetime]
+    release_due_date: Optional[datetime]
+    archived: bool
+    display_order: int
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        start_date = datetime.strptime(
+            data["startDate"],
+            cls._DATETIME_FORMAT) if data["startDate"] else None
+        release_due_date = datetime.strptime(
+            data["releaseDueDate"],
+            cls._DATETIME_FORMAT) if data["releaseDueDate"] else None
+
+        return cls(
+            id=data["id"],
+            project_id=data["projectId"],
+            name=data["name"],
+            description=data["description"],
+            start_date=start_date,
+            release_due_date=release_due_date,
+            archived=data["archived"],
             display_order=data["displayOrder"],
         )

@@ -19,7 +19,7 @@ from typing import List, Union
 import requests
 
 from .models import (Category, IssueType, Priority, Project, Resolution, Space,
-                     User)
+                     User, Version)
 
 
 class BacklogApi(object):
@@ -181,6 +181,18 @@ class BacklogApi(object):
 
         categories = self._send_get_request(url)
         return [Category.from_dict(category) for category in categories]
+
+    def get_project_versions(
+            self, project_id_or_key: Union[int, str]) -> List[Version]:
+        """Get list of versions(milestones) in the project.
+
+        :param project_id_or_key: project id or project key
+        :return: list of versions(milestones)
+        """
+        url = f"projects/{project_id_or_key}/versions"
+
+        versions = self._send_get_request(url)
+        return [Version.from_dict(version) for version in versions]
 
     def _send_get_request(self, path: str, query_params: dict = None):
         query_params = query_params or {}
