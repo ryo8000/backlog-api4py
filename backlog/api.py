@@ -19,8 +19,8 @@ from typing import List, Optional, Union
 import requests
 
 from .models import (Attachment, Category, Comment, IssueType, Priority,
-                     Project, Resolution, Space, Star, Status, User, Version,
-                     Wiki)
+                     Project, Resolution, SharedFile, Space, Star, Status,
+                     User, Version, Wiki)
 
 
 class BacklogApi(object):
@@ -324,8 +324,22 @@ class BacklogApi(object):
         """
         url = f"wikis/{wiki_id}/attachments"
 
-        wikis = self._send_get_request(url)
-        return [Attachment.from_dict(wiki) for wiki in wikis]
+        attachments = self._send_get_request(url)
+        return [Attachment.from_dict(attachment) for attachment in attachments]
+
+    def get_wiki_shared_files(
+            self,
+            wiki_id: int) -> List[SharedFile]:
+        """Get list of shared files on wiki.
+
+        :param wiki_id: wiki id
+        :return: list of shared files
+        """
+        url = f"wikis/{wiki_id}/sharedFiles"
+
+        shared_files = self._send_get_request(url)
+        return [SharedFile.from_dict(shared_file)
+                for shared_file in shared_files]
 
     def _send_get_request(self, path: str, query_params: dict = None):
         query_params = query_params or {}
