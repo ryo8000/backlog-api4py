@@ -13,6 +13,7 @@ setup(
     version=__version__,
     author=__author__,
     maintainer=__author__,
+    url="https://github.com/ryo8000/backlog-api4py",
     description="Backlog API for Python",
     long_description=readme,
     license=__license__,
