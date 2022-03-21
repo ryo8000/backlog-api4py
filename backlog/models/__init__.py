@@ -18,6 +18,7 @@ from .base import (  # noqa
     Base,
 )
 from .const import (  # noqa
+    Priority,
     Resolution,
 )
 from .user import (  # noqa

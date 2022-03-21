@@ -32,7 +32,7 @@ class BaseEnum(Enum):
         return self.value[0]
 
     @classmethod
-    def value_of(cls, value: int) -> "BaseEnum":
+    def value_of(cls, value: int):
         """Create instance matching the specified integer value.
 
         :param value: integer type variable
@@ -43,6 +43,14 @@ class BaseEnum(Enum):
             if priority.value[0] == value:
                 return priority
         raise ValueError(f"Invalid value. value: {value}")
+
+
+class Priority(BaseEnum):
+    """Priority class."""
+
+    HIGH = (2, "High")
+    NORMAL = (3, "Normal")
+    LOW = (4, "Low")
 
 
 class Resolution(BaseEnum):
